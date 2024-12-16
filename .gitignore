@@ -1,1 +1,61 @@
-config.py
+# Ambientes virtuais
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+temp/
+*.pid
+*.seed
+
+# Configurações do sistema e IDEs
+.vscode/
+.idea/
+*.iml
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# Arquivos de banco de dados local
+*.sqlite3
+*.db
+
+# Arquivos de ambiente
+.env
+.env.*
+
+# Dependências do Python
+pip-log.txt
+pip-delete-this-directory.txt
+__pypackages__/
+
+# Arquivos gerados
+dist/
+build/
+*.egg-info/
+*.egg
+*.tar.gz
+
+# Testes e relatórios
+.coverage
+htmlcov/
+.tox/
+.nox/
+pytest_cache/
+junit.xml
+.coverage.*
+
+# Arquivos Docker
+docker-compose.override.yml
+.docker/
+
+# Documentação
+docs/_build/
+
+# Repositórios
+*.rdb
