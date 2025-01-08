@@ -12,6 +12,7 @@ __pycache__/
 temp/
 *.pid
 *.seed
+tmp/
 
 # Configurações do sistema e IDEs
 .vscode/
