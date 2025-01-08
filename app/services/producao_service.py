@@ -28,7 +28,6 @@ def process_producao_csv(file_path):
     df = pd.read_csv(file_path, delimiter=";")
     df.columns = [col.strip().lower().replace(" ", "_") for col in df.columns]
 
-    # Converte o DataFrame para formato longo
     long_df = df.melt(
         id_vars=["id", "control", "produto"],
         var_name="ano",
@@ -37,7 +36,6 @@ def process_producao_csv(file_path):
     long_df["ano"] = long_df["ano"].astype(int)
     long_df["valor"] = pd.to_numeric(long_df["valor"], errors="coerce")
 
-    # Remove duplicatas com base no campo 'id' e 'ano'
     long_df = long_df.drop_duplicates(subset=["id", "ano"])
 
     return long_df
@@ -49,6 +47,7 @@ def save_producao_to_db(data):
     """
     session = SessionLocal()
     try:
+        new_records = []
         for _, row in data.iterrows():
             existing_record = session.query(Producao).filter_by(
                 vinho_id=row["id"],
@@ -63,11 +62,14 @@ def save_producao_to_db(data):
                     ano=row["ano"],
                     valor=row["valor"]
                 )
-                print(f"Novo registro adicionado: vinho_id={new_record.vinho_id}, ano={new_record.ano}")
-                session.add(new_record)
+                new_records.append(new_record)
 
-        session.commit()
-        print("Dados atualizados no banco de dados!")
+        if new_records:
+            session.bulk_save_objects(new_records)
+            session.commit()
+            print(f"{len(new_records)} novos registros adicionados!")
+        else:
+            print("Nenhum novo registro para adicionar.")
     except Exception as e:
         session.rollback()
         print(f"Erro ao atualizar os dados: {e}")

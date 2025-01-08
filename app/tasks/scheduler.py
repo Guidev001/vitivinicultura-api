@@ -1,8 +1,11 @@
+from apscheduler.events import EVENT_JOB_ERROR
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.services.producao_service import process_producao_csv, save_producao_to_db, download_csv
 
 URL = "http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv"  # URL do arquivo
+
+scheduler = BackgroundScheduler()
 
 def update_producao_data():
     """
@@ -21,7 +24,14 @@ def start_scheduler():
     """
     Inicia o agendador de tarefas em background.
     """
-    scheduler = BackgroundScheduler()
     scheduler.add_job(update_producao_data, 'interval', minutes=10)
+    def listener(event):
+        if event.exception:
+            print(f"Erro no job: {event.exception}")
+
+    scheduler.add_listener(listener, EVENT_JOB_ERROR)
     scheduler.start()
     print("Scheduler iniciado. A tarefa será executada a cada 1 minuto.")
+
+def stop_scheduler():
+    scheduler.shutdown()

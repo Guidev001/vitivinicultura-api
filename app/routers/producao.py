@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional, List
 
@@ -26,23 +26,22 @@ def listar_producao(
     ano: Optional[int] = Query(None, description="Ano do registro"),
     db: Session = Depends(get_db),
 ):
-    """
-    Lista registros de produção com base em ID, Ano ou ambos.
-    """
-    query = db.query(Producao)
+    try:
+        query = db.query(Producao)
 
-    if id:
-        query = query.filter(Producao.id == id)
+        if id:
+            query = query.filter(Producao.id == id)
 
-    if vinhoId:
-        query = query.filter(Producao.vinho_id == vinhoId)
+        if vinhoId:
+            query = query.filter(Producao.vinho_id == vinhoId)
 
-    if ano:
-        query = query.filter(Producao.ano == ano)
+        if ano:
+            query = query.filter(Producao.ano == ano)
 
-    resultados = query.all()
+        resultados = query.all()
+        if not resultados:
+            raise HTTPException(status_code=404, detail="Nenhum registro encontrado")
 
-    if not resultados:
-        return []
-
-    return resultados
+        return resultados
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
