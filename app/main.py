@@ -1,13 +1,10 @@
 from fastapi import FastAPI
-
 from app.database.db import Base, engine
-from app.routers import producao
+from app.routers import producao, comercio
 from app.tasks.scheduler import start_scheduler
 
-# Inicializar o banco de dados
 Base.metadata.create_all(bind=engine)
 
-# Iniciar a aplicação FastAPI
 app = FastAPI(
     title="Vitivinicultura API",
     description="API para gerenciar dados de vitivinicultura.",
@@ -22,10 +19,11 @@ app = FastAPI(
 )
 
 app.include_router(producao.router)
+app.include_router(comercio.router)
 
-# Iniciar o agendador de tarefas
-# start_scheduler()
+# Iniciar o scheduler
+start_scheduler()
 
 @app.get("/")
 def read_root():
-    return {"message": "API de Produção está rodando!"}
+    return {"message": "API de Produção e Comércio está rodando!"}

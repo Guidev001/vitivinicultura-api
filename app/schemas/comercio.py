@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class ProducaoResponse(BaseModel):
+class ComercioResponse(BaseModel):
     id: int
-    control: str
+    control: Optional[str]
     produto: str
     ano: int
     valor: Optional[float]

@@ -2,11 +2,11 @@ from sqlalchemy import Column, Integer, String, Float, PrimaryKeyConstraint
 
 from app.database.db import Base
 
-class Producao(Base):
-    __tablename__ = "producao"
+class Comercio(Base):
+    __tablename__ = "comercio"
 
     id = Column(Integer, nullable=False)
-    control = Column(String, nullable=False)
+    control = Column(String, nullable=True)
     produto = Column(String, nullable=False)
     ano = Column(Integer, nullable=False)
     valor = Column(Float, nullable=True)
