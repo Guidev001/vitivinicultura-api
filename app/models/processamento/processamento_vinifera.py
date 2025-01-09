@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Integer, String, Float, PrimaryKeyConstraint
 from app.database.db import Base
+from app.models.base import BaseModel
 
-class ProcessamentoVinifera(Base):
+
+class ProcessamentoVinifera(BaseModel):
     __tablename__ = "processamento_vinifera"
 
     id = Column(Integer, nullable=False)

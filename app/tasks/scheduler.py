@@ -83,14 +83,14 @@ def start_scheduler():
     scheduler = BackgroundScheduler()
 
     # Produção e Comércio
-    # scheduler.add_job(update_producao_data, 'interval', hours=24)
-    # scheduler.add_job(update_comercio_data, 'interval', hours=24)
+    scheduler.add_job(update_producao_data, 'interval', hours=24, max_instances=1)
+    scheduler.add_job(update_comercio_data, 'interval', hours=24, max_instances=1)
 
     # Processamentos
-    scheduler.add_job(update_processamento_vinifera, 'interval', minutes=1)
-    # scheduler.add_job(update_processamento_americanas, 'interval', minutes=2)
-    # scheduler.add_job(update_processamento_uvas_mesa, 'interval', minutes=3)
-    # scheduler.add_job(update_processamento_sem_classificacao, 'interval', minutes=4)
+    scheduler.add_job(update_processamento_vinifera, 'interval', hours=23, max_instances=1)
+    scheduler.add_job(update_processamento_americanas, 'interval', hours=23, max_instances=1)
+    scheduler.add_job(update_processamento_uvas_mesa, 'interval', hours=22, max_instances=1)
+    scheduler.add_job(update_processamento_sem_classificacao, 'interval', hours=22, max_instances=1)
 
     scheduler.start()
     print("Scheduler iniciado. As tarefas serão executadas periodicamente.")

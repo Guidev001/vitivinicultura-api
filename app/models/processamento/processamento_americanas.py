@@ -1,7 +1,11 @@
 from sqlalchemy import Column, Integer, String, Float, PrimaryKeyConstraint
-from app.database.db import Base
+from sqlalchemy.orm import validates
 
-class ProcessamentoAmericanas(Base):
+from app.database.db import Base
+from app.models.base import BaseModel
+
+
+class ProcessamentoAmericanas(BaseModel):
     __tablename__ = "processamento_americanas"
 
     id = Column(Integer, nullable=False)

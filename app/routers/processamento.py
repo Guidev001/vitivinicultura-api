@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from app.database.db import SessionLocal
@@ -31,15 +31,22 @@ def listar_processamento_vinifera(
     ano: Optional[int] = Query(None, description="Ano do registro"),
     db: Session = Depends(get_db),
 ):
-    query = db.query(ProcessamentoVinifera)
+    try:
+        query = db.query(ProcessamentoVinifera)
 
-    if id:
-        query = query.filter(ProcessamentoVinifera.id == id)
+        if id:
+            query = query.filter(ProcessamentoVinifera.id == id)
 
-    if ano:
-        query = query.filter(ProcessamentoVinifera.ano == ano)
+        if ano:
+            query = query.filter(ProcessamentoVinifera.ano == ano)
 
-    return query.all()
+        resultados = query.all()
+        if not resultados:
+            raise HTTPException(status_code=404, detail="Nenhum registro encontrado")
+
+        return resultados
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Processamento - Americanas e Híbridas
 @router.get("/americanas", response_model=List[ProcessamentoAmericanasResponse])
@@ -48,15 +55,22 @@ def listar_processamento_americanas(
     ano: Optional[int] = Query(None, description="Ano do registro"),
     db: Session = Depends(get_db),
 ):
-    query = db.query(ProcessamentoAmericanas)
+    try:
+        query = db.query(ProcessamentoAmericanas)
 
-    if id:
-        query = query.filter(ProcessamentoAmericanas.id == id)
+        if id:
+            query = query.filter(ProcessamentoAmericanas.id == id)
 
-    if ano:
-        query = query.filter(ProcessamentoAmericanas.ano == ano)
+        if ano:
+            query = query.filter(ProcessamentoAmericanas.ano == ano)
 
-    return query.all()
+        resultados = query.all()
+        if not resultados:
+            raise HTTPException(status_code=404, detail="Nenhum registro encontrado")
+
+        return resultados
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Processamento - Uvas de Mesa
 @router.get("/uvas-de-mesa", response_model=List[ProcessamentoUvasMesaResponse])
@@ -65,15 +79,22 @@ def listar_processamento_uvas_mesa(
     ano: Optional[int] = Query(None, description="Ano do registro"),
     db: Session = Depends(get_db),
 ):
-    query = db.query(ProcessamentoUvasMesa)
+    try:
+        query = db.query(ProcessamentoUvasMesa)
 
-    if id:
-        query = query.filter(ProcessamentoUvasMesa.id == id)
+        if id:
+            query = query.filter(ProcessamentoUvasMesa.id == id)
 
-    if ano:
-        query = query.filter(ProcessamentoUvasMesa.ano == ano)
+        if ano:
+            query = query.filter(ProcessamentoUvasMesa.ano == ano)
 
-    return query.all()
+        resultados = query.all()
+        if not resultados:
+            raise HTTPException(status_code=404, detail="Nenhum registro encontrado")
+
+        return resultados
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Processamento - Sem Classificação
 @router.get("/sem-classificacao", response_model=List[ProcessamentoSemClassificacaoResponse])
@@ -82,12 +103,19 @@ def listar_processamento_sem_classificacao(
     ano: Optional[int] = Query(None, description="Ano do registro"),
     db: Session = Depends(get_db),
 ):
-    query = db.query(ProcessamentoSemClassificacao)
+    try:
+        query = db.query(ProcessamentoSemClassificacao)
 
-    if id:
-        query = query.filter(ProcessamentoSemClassificacao.id == id)
+        if id:
+            query = query.filter(ProcessamentoSemClassificacao.id == id)
 
-    if ano:
-        query = query.filter(ProcessamentoSemClassificacao.ano == ano)
+        if ano:
+            query = query.filter(ProcessamentoSemClassificacao.ano == ano)
 
-    return query.all()
+        resultados = query.all()
+        if not resultados:
+            raise HTTPException(status_code=404, detail="Nenhum registro encontrado")
+
+        return resultados
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

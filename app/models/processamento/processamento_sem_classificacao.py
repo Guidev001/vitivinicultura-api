@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Integer, String, Float, PrimaryKeyConstraint
 from app.database.db import Base
+from app.models.base import BaseModel
 
-class ProcessamentoSemClassificacao(Base):
+
+class ProcessamentoSemClassificacao(BaseModel):
     __tablename__ = "processamento_sem_classificacao"
 
     id = Column(Integer, nullable=False)
