@@ -80,13 +80,19 @@ def run_pipeline(url, model, id_vars, id_column, file_name="data.csv"):
     """
     Pipeline completo para download, processamento e salvamento de dados no banco.
     """
+    file_path = ""
     session = SessionLocal()
     try:
         print(f"Iniciando pipeline para {model.__tablename__}...")
-        file_path = download_csv(url, save_dir="tmp", file_name=file_name)
+        try:
+            file_path = download_csv(url, save_dir="tmp", file_name=file_name)
+        except Exception as e:
+            print(f"Erro ao baixar o arquivo: {e}")
+            return
         processed_data = process_csv(file_path, id_vars=id_vars)
-        save_data_to_db(processed_data, model=model, id_column=id_column, session=session)
+        save_data_to_db(processed_data, model=model, session=session)
     except Exception as e:
         print(f"Erro no pipeline: {e}")
     finally:
         session.close()
+        print("Pipeline finalizado com sucesso!")
