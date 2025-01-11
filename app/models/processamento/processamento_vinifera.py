@@ -10,7 +10,7 @@ class ProcessamentoVinifera(BaseModel):
     control = Column(String, nullable=False)
     cultivar = Column(String, nullable=False)
     ano = Column(Integer, nullable=False)
-    valor = Column(Float, nullable=True)
+    kg = Column(Float, nullable=True)
 
     __table_args__ = (
         PrimaryKeyConstraint('id', 'ano'),

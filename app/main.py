@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.database.db import Base, engine
-from app.routers import producao, comercio, processamento
+from app.routers import producao, comercio, processamento, importacao
 from app.tasks.scheduler import start_scheduler
 
 Base.metadata.create_all(bind=engine)
@@ -21,6 +21,7 @@ app = FastAPI(
 app.include_router(producao.router)
 app.include_router(comercio.router)
 app.include_router(processamento.router)
+app.include_router(importacao.router)
 
 # Iniciar o scheduler
 start_scheduler()

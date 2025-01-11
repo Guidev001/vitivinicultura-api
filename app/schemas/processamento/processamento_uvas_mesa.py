@@ -6,7 +6,7 @@ class ProcessamentoUvasMesaResponse(BaseModel):
     control: str
     cultivar: str
     ano: int
-    valor: Optional[float]
+    kg: Optional[float]
 
     class Config:
         orm_mode = True

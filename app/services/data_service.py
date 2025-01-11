@@ -1,4 +1,3 @@
-import csv
 import shutil
 
 import pandas as pd
@@ -8,10 +7,12 @@ from sqlalchemy.orm import Session
 from app.database.db import SessionLocal
 import time
 
+from app.utils.file_utils import fix_csv_encoding
+
 
 def download_csv(url, save_dir="tmp", file_name="data.csv", max_retries=5, retry_interval=2):
     """
-    Faz o download do arquivo CSV e salva na pasta especificada.
+    Faz o download do arquivo CSV e salva na pasta especificada, corrigindo encoding.
     """
     os.makedirs(save_dir, exist_ok=True)
     file_path = os.path.join(save_dir, file_name)
@@ -29,38 +30,73 @@ def download_csv(url, save_dir="tmp", file_name="data.csv", max_retries=5, retry
             retries += 1
             time.sleep(retry_interval)
 
+        # Corrige encoding e caracteres quebrados
+        fix_csv_encoding(file_path)
+
         return file_path
     else:
         raise Exception(f"Falha ao baixar o arquivo: {response.status_code}")
 
 
-def process_csv(file_path, id_vars, var_name="ano", value_name="valor"):
+def process_csv(file_path, id_vars, var_name="ano", metric_names=None):
     """
-    Processa um CSV e converte para formato longo (melt).
+    Processa um CSV de forma genérica, separando múltiplas métricas por ano.
+
+    Args:
+        file_path (str): Caminho do arquivo CSV.
+        id_vars (list): Colunas que identificam o registro (e.g., 'id', 'pais').
+        var_name (str): Nome da coluna representando os anos.
+        metric_names (list): Lista de nomes para as métricas detectadas (e.g., ['quantidade_kg', 'valor_usd']).
+
+    Returns:
+        pd.DataFrame: DataFrame em formato longo com as métricas separadas.
     """
-    # Tenta detectar automaticamente o delimitador
+    if not isinstance(metric_names, list):
+        raise ValueError("`metric_names` deve ser uma lista contendo os nomes das métricas.")
+
     try:
-        df = pd.read_csv(file_path, sep=None, engine="python")
+        df = pd.read_csv(file_path, sep=None, engine="python", encoding="latin1")
     except Exception as e:
         raise Exception(f"Erro ao processar o arquivo: {e}")
 
-    # Normaliza os nomes das colunas
+    # Normaliza nomes das colunas
     df.columns = [col.strip().lower().replace(" ", "_") for col in df.columns]
+    df.columns = [col.replace("país", "pais") for col in df.columns]
 
-    # Converte o DataFrame para formato longo
-    long_df = df.melt(
+    # Detecta colunas de quantidade (sem '.1') e de valor (com '.1') apenas se necessário
+    quantidade_cols = [col for col in df.columns if col.isdigit() and not col.endswith(".1")]
+    valor_cols = [col for col in df.columns if col.endswith(".1")] if len(metric_names) > 1 else []
+    print("quantidade_cols:", quantidade_cols)
+    print("valor_cols:", valor_cols)
+
+    # Cria DataFrame longo para quantidade
+    quantidade_df = df.melt(
         id_vars=id_vars,
+        value_vars=quantidade_cols,
         var_name=var_name,
-        value_name=value_name
+        value_name=metric_names[0]
     )
-    long_df[var_name] = pd.to_numeric(long_df[var_name], errors="coerce")
-    long_df[value_name] = pd.to_numeric(long_df[value_name], errors="coerce")
+    quantidade_df[var_name] = quantidade_df[var_name].str.extract(r'(\d+)').astype(int)
+    quantidade_df[metric_names[0]] = pd.to_numeric(quantidade_df[metric_names[0]], errors="coerce")
 
-    if "control" in long_df.columns and "cultivar" in long_df.columns:
-        long_df["control"] = long_df["control"].fillna(long_df["cultivar"])
+    # Se houver mais de uma métrica, cria DataFrame longo para valores
+    if len(metric_names) > 1:
+        valor_df = df.melt(
+            id_vars=id_vars,
+            value_vars=valor_cols,
+            var_name=var_name,
+            value_name=metric_names[1]
+        )
+        valor_df[var_name] = valor_df[var_name].str.extract(r'(\d+)').astype(int)
+        valor_df[metric_names[1]] = pd.to_numeric(valor_df[metric_names[1]], errors="coerce")
+
+        # Combina quantidade e valor em um único DataFrame
+        long_df = pd.merge(quantidade_df, valor_df, on=id_vars + [var_name], how="left")
+    else:
+        long_df = quantidade_df
 
     # Remove duplicatas
-    long_df = long_df.drop_duplicates(subset=["id", "ano"])
+    long_df = long_df.drop_duplicates(subset=id_vars + [var_name])
 
     return long_df
 
@@ -98,7 +134,7 @@ def save_data_to_db(data, model, id_column, session: Session):
         session.close()
 
 
-def run_pipeline(url, model, id_vars, id_column, file_name="data.csv"):
+def run_pipeline(url, model, id_vars, id_column, file_name="data.csv", metric_names=None):
     """
     Pipeline completo para download, processamento e salvamento de dados no banco.
     """
@@ -107,14 +143,14 @@ def run_pipeline(url, model, id_vars, id_column, file_name="data.csv"):
     try:
         print(f"Iniciando pipeline para {model.__tablename__}...")
         file_path = download_csv(url, save_dir=save_dir, file_name=file_name)
-        processed_data = process_csv(file_path, id_vars=id_vars)
+        processed_data = process_csv(file_path, id_vars=id_vars, metric_names=metric_names)
         save_data_to_db(processed_data, model=model, id_column=id_column, session=session)
     except Exception as e:
         print(f"Erro no pipeline: {e}")
     finally:
         if os.path.exists(save_dir):
             try:
-                shutil.rmtree(save_dir)
+                # shutil.rmtree(save_dir)
                 print(f"Pasta '{save_dir}' removida com sucesso!")
             except Exception as e:
                 print(f"Erro ao remover a pasta '{save_dir}': {e}")

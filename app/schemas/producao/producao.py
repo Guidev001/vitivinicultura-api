@@ -6,7 +6,7 @@ class ProducaoResponse(BaseModel):
     control: str
     produto: str
     ano: int
-    valor: Optional[float]
+    litros: Optional[float]
 
     class Config:
         orm_mode = True

@@ -9,7 +9,7 @@ class Producao(Base):
     control = Column(String, nullable=False)
     produto = Column(String, nullable=False)
     ano = Column(Integer, nullable=False)
-    valor = Column(Float, nullable=True)
+    litros = Column(Float, nullable=True)
 
     __table_args__ = (
         PrimaryKeyConstraint('id', 'ano'),

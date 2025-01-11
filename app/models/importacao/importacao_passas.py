@@ -1,16 +1,16 @@
 from sqlalchemy import Column, Integer, String, Float, PrimaryKeyConstraint
-from app.database.db import Base
+
 from app.models.base import BaseModel
 
 
-class ProcessamentoUvasMesa(BaseModel):
-    __tablename__ = "processamento_uvas_mesa"
+class ImportacaoPassas(BaseModel):
+    __tablename__ = "importacao_passas"
 
     id = Column(Integer, nullable=False)
-    control = Column(String, nullable=False)
-    cultivar = Column(String, nullable=False)
+    pais = Column(String, nullable=False)
     ano = Column(Integer, nullable=False)
-    kg = Column(Float, nullable=True)
+    quantidade_kg = Column(Float, nullable=True)
+    valor_usd = Column(Float, nullable=True)
 
     __table_args__ = (
         PrimaryKeyConstraint('id', 'ano'),
