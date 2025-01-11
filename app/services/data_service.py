@@ -1,5 +1,6 @@
 import shutil
 
+import numpy as np
 import pandas as pd
 import os
 import requests
@@ -105,6 +106,9 @@ def save_data_to_db(data, model, id_column, session: Session):
     Salva os dados processados no banco de dados.
     """
     try:
+        # Substitui NaN por None
+        data = data.replace({np.nan: None})
+
         new_records = []
         for _, row in data.iterrows():
             # Verifica se o registro já existe
