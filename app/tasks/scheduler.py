@@ -1,6 +1,10 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.models.comercio.comercio import Comercio
+from app.models.exportacao.exportacao_espumantes import ExportacaoEspumantes
+from app.models.exportacao.exportacao_frescas import ExportacaoFrescas
+from app.models.exportacao.exportacao_suco import ExportacaoSuco
+from app.models.exportacao.exportacao_vinhos import ExportacaoVinhos
 from app.models.importacao.importacao_espumantes import ImportacaoEspumantes
 from app.models.importacao.importacao_frescas import ImportacaoFrescas
 from app.models.importacao.importacao_passas import ImportacaoPassas
@@ -28,6 +32,10 @@ URL_IMPORTACAO_FRESCAS = "http://vitibrasil.cnpuv.embrapa.br/download/ImpFrescas
 URL_IMPORTACAO_ESPUMANTES = "http://vitibrasil.cnpuv.embrapa.br/download/ImpEspumantes.csv"
 URL_IMPORTACAO_PASSAS = "http://vitibrasil.cnpuv.embrapa.br/download/ImpPassas.csv"
 
+URL_EXPORTACAO_VINHOS = "http://vitibrasil.cnpuv.embrapa.br/download/ExpVinho.csv"
+URL_EXPORTACAO_SUCO = "http://vitibrasil.cnpuv.embrapa.br/download/ExpSuco.csv"
+URL_EXPORTACAO_ESPUMANTES = "http://vitibrasil.cnpuv.embrapa.br/download/ExpEspumantes.csv"
+URL_EXPORTACAO_PASSAS = "http://vitibrasil.cnpuv.embrapa.br/download/ExpUva.csv"
 
 # Funções de atualização
 def update_producao_data():
@@ -145,6 +153,48 @@ def update_imp_passas():
         metric_names=["quantidade_kg", "valor_usd"]
     )
 
+def update_exp_vinhos():
+    run_pipeline(
+        url=URL_EXPORTACAO_VINHOS,
+        model=ExportacaoVinhos,
+        id_vars=["id", "pais"],
+        id_column="pais",
+        file_name="exp_vinhos.csv",
+        metric_names=["quantidade_kg", "valor_usd"]
+    )
+
+def update_exp_suco():
+    run_pipeline(
+        url=URL_EXPORTACAO_SUCO,
+        model=ExportacaoSuco,
+        id_vars=["id", "pais"],
+        id_column="pais",
+        file_name="exp_suco.csv",
+        metric_names=["quantidade_kg", "valor_usd"]
+    )
+
+def update_exp_espumantes():
+    run_pipeline(
+        url=URL_EXPORTACAO_ESPUMANTES,
+        model=ExportacaoEspumantes,
+        id_vars=["id", "pais"],
+        id_column="pais",
+        file_name="exp_espumantes.csv",
+        metric_names=["quantidade_kg", "valor_usd"]
+    )
+
+def update_exp_frescas():
+    run_pipeline(
+        url=URL_EXPORTACAO_PASSAS,
+        model=ExportacaoFrescas,
+        id_vars=["id", "pais"],
+        id_column="pais",
+        file_name="exp_passas.csv",
+        metric_names=["quantidade_kg", "valor_usd"]
+    )
+
+
+
 
 # Inicia o agendador
 def start_scheduler():
@@ -166,6 +216,12 @@ def start_scheduler():
     scheduler.add_job(update_imp_suco, 'interval', seconds=55, max_instances=1)
     scheduler.add_job(update_imp_espumantes, 'interval', seconds=55, max_instances=1)
     scheduler.add_job(update_imp_passas, 'interval', seconds=53, max_instances=1)
+
+    # Exportações
+    scheduler.add_job(update_exp_vinhos, 'interval', seconds=55, max_instances=1)
+    scheduler.add_job(update_exp_suco, 'interval', seconds=55, max_instances=1)
+    scheduler.add_job(update_exp_espumantes, 'interval', seconds=55, max_instances=1)
+    scheduler.add_job(update_exp_frescas, 'interval', seconds=55, max_instances=1)
 
     scheduler.start()
     print("Scheduler iniciado. As tarefas serão executadas periodicamente.")
