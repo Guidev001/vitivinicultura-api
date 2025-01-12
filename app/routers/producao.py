@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional, List
 
-from app.database.db import SessionLocal
+from app.database.db import SessionLocal, get_db
 
 from app.models.producao.producao import Producao
 from app.schemas.producao.producao import ProducaoResponse
@@ -12,13 +12,6 @@ router = APIRouter(
     tags=["Produção"],
     responses={404: {"description": "Não encontrado"}},
 )
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.get("/", response_model=List[ProducaoResponse])
 def listar_producao(

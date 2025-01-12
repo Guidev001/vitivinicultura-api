@@ -1,6 +1,9 @@
-from fastapi import FastAPI
-from app.database.db import Base, engine
-from app.routers import producao, comercio, processamento, importacao
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
+
+from app.auth.auth_service import authenticate_user
+from app.database.db import Base, engine, get_db
+from app.routers import producao, comercio, processamento, importacao, users
 from app.tasks.scheduler import start_scheduler
 
 Base.metadata.create_all(bind=engine)
@@ -18,12 +21,27 @@ app = FastAPI(
     },
 )
 
+@app.middleware("http")
+async def basic_auth_middleware(request: Request, call_next):
+    if request.url.path not in []:
+        try:
+            db = next(get_db())
+            await authenticate_user(request, db)
+        except HTTPException as exc:
+            return JSONResponse(
+                content={"detail": exc.detail},
+                status_code=exc.status_code,
+                headers={"WWW-Authenticate": "Basic"}
+            )
+    response = await call_next(request)
+    return response
+
 app.include_router(producao.router)
 app.include_router(comercio.router)
 app.include_router(processamento.router)
 app.include_router(importacao.router)
+app.include_router(users.router)
 
-# Iniciar o scheduler
 start_scheduler()
 
 @app.get("/")

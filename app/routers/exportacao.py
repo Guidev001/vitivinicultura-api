@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional, List
-from app.database.db import SessionLocal
+from app.database.db import SessionLocal, get_db
 from app.models.exportacao.exportacao_espumantes import ExportacaoEspumantes
 from app.models.exportacao.exportacao_frescas import ExportacaoFrescas
 from app.models.exportacao.exportacao_suco import ExportacaoSuco
@@ -26,13 +26,6 @@ router = APIRouter(
     tags=["Exportação"],
     responses={404: {"description": "Não encontrado"}},
 )
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Importação - Vinhos
 @router.get("/vinhos", response_model=List[ExportacaoVinhosResponse])

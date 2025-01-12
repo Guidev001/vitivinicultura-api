@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional, List
-from app.database.db import SessionLocal
+from app.database.db import SessionLocal, get_db
 from app.models.processamento.processamento_americanas import ProcessamentoAmericanas
 from app.models.processamento.processamento_sem_classificacao import ProcessamentoSemClassificacao
 from app.models.processamento.processamento_uvas_mesa import ProcessamentoUvasMesa
@@ -16,13 +16,6 @@ router = APIRouter(
     tags=["Processamento"],
     responses={404: {"description": "Não encontrado"}},
 )
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Processamento - Viníferas
 @router.get("/vinifera", response_model=List[ProcessamentoViniferaResponse])
