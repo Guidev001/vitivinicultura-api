@@ -203,10 +203,10 @@ def start_scheduler():
     scheduler.add_job(update_comercio_data, 'interval', hours=24, max_instances=1)
 
     # Processamentos
-    scheduler.add_job(update_processamento_vinifera, 'interval', hours=24, max_instances=1)
-    scheduler.add_job(update_processamento_americanas, 'interval', hours=24, max_instances=1)
-    scheduler.add_job(update_processamento_uvas_mesa, 'interval', hours=24, max_instances=1)
-    scheduler.add_job(update_processamento_sem_classificacao, 'interval', hours=24, max_instances=1)
+    scheduler.add_job(update_processamento_vinifera, 'interval', seconds=24, max_instances=1)
+    scheduler.add_job(update_processamento_americanas, 'interval', seconds=24, max_instances=1)
+    scheduler.add_job(update_processamento_uvas_mesa, 'interval', seconds=24, max_instances=1)
+    scheduler.add_job(update_processamento_sem_classificacao, 'interval', seconds=24, max_instances=1)
 
     # Importações
     scheduler.add_job(update_imp_frescas, 'interval', hours=24, max_instances=1)
@@ -216,10 +216,10 @@ def start_scheduler():
     scheduler.add_job(update_imp_passas, 'interval', hours=24, max_instances=1)
 
     # Exportações
-    scheduler.add_job(update_exp_vinhos, 'interval', hours=24, max_instances=1)
-    scheduler.add_job(update_exp_suco, 'interval', hours=24, max_instances=1)
-    scheduler.add_job(update_exp_espumantes, 'interval', hours=24, max_instances=1)
-    scheduler.add_job(update_exp_frescas, 'interval', hours=24, max_instances=1)
+    scheduler.add_job(update_exp_vinhos, 'interval', seconds=10, max_instances=1)
+    scheduler.add_job(update_exp_suco, 'interval', seconds=10, max_instances=1)
+    scheduler.add_job(update_exp_espumantes, 'interval', seconds=10, max_instances=1)
+    scheduler.add_job(update_exp_frescas, 'interval', seconds=10, max_instances=1)
 
     scheduler.start()
     print("Scheduler iniciado. As tarefas serão executadas periodicamente.")
