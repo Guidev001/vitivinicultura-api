@@ -2,7 +2,7 @@
 
 ### 🎯 Objetivo do Projeto
 A API desenvolvida visa gerenciar dados de vitivinicultura, oferencendo funcionalidades
-como leitura dos dados  de processamento, importação, produção e comércio. O sistema
+como leitura dos dados  de processamento, importação, exportação, produção e comércio. O sistema
 permite o consumo seguro dos dados com autenticação básica de username e senha, além
 de possibilitar o uso desses dados para futuras integrações com sistemas de inteligência
 artificial.
