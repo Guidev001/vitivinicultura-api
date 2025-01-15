@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" version="26.0.5">
   <diagram name="Página-1" id="JmScz9D42qG63NmWfpSs">
-    <mxGraphModel dx="2049" dy="2272" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2390" dy="2456" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -197,6 +197,54 @@
           <mxGeometry x="-0.0119" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-132" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0.993;exitY=0.528;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="EYt-4aY_usFX-jZj1nNx-125" target="EYt-4aY_usFX-jZj1nNx-104">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1780" y="830" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="1800" y="700" />
+              <mxPoint x="1800" y="318" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-133" value="Inserção" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="EYt-4aY_usFX-jZj1nNx-132">
+          <mxGeometry x="-0.1087" y="-2" relative="1" as="geometry">
+            <mxPoint y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-125" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1459" y="589" width="300" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-127" value="&lt;h1&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;Scheduler&lt;/span&gt;&lt;/h1&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1505.47" y="599" width="209.05" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-146" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="EYt-4aY_usFX-jZj1nNx-130" target="EYt-4aY_usFX-jZj1nNx-141">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-130" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/management_governance/Scheduler_Job_Collections.svg;" vertex="1" parent="1">
+          <mxGeometry x="1476" y="669" width="68" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-131" value="&lt;b&gt;A cada 24h&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="1475" y="733" width="70" height="30" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;app/tasks/scheduler.py&lt;/span&gt;" link="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;&quot;&gt;app/routers/exportacao.py&lt;/span&gt;" id="EYt-4aY_usFX-jZj1nNx-134">
+          <mxCell style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+            <mxGeometry x="1546" y="617" width="130" height="20" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-135" value="&lt;font&gt;Embrapa&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 7px; line-height: 100%;&quot;&gt;CSV Files&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="739" width="120" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-142" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="EYt-4aY_usFX-jZj1nNx-141" target="EYt-4aY_usFX-jZj1nNx-135">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-143" value="&lt;span&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;&lt;b&gt;Manipula os dados&lt;/b&gt;&lt;/font&gt;&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=default;" vertex="1" connectable="0" parent="EYt-4aY_usFX-jZj1nNx-142">
+          <mxGeometry x="-0.2708" y="-2" relative="1" as="geometry">
+            <mxPoint x="2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EYt-4aY_usFX-jZj1nNx-141" value="&lt;div&gt;&lt;font style=&quot;line-height: 100%;&quot;&gt;Service&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 7px;&quot;&gt;app/services/data_services&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="659" width="120" height="32" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
