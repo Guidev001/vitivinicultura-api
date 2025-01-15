@@ -1,5 +1,3 @@
-import shutil
-
 import numpy as np
 import pandas as pd
 import os
@@ -10,10 +8,22 @@ import time
 
 from app.utils.file_utils import fix_csv_encoding
 
-
 def download_csv(url, save_dir="tmp", file_name="data.csv", max_retries=5, retry_interval=2):
     """
-    Faz o download do arquivo CSV e salva na pasta especificada, corrigindo encoding.
+    Faz o download de um arquivo CSV, salva em um diretório temporário e corrige problemas de encoding.
+
+    Args:
+        url (str): URL de onde o CSV será baixado.
+        save_dir (str): Diretório onde o arquivo será salvo (padrão: 'tmp').
+        file_name (str): Nome do arquivo salvo (padrão: 'data.csv').
+        max_retries (int): Número máximo de tentativas de verificar se o arquivo foi salvo (padrão: 5).
+        retry_interval (int): Intervalo (em segundos) entre as tentativas (padrão: 2).
+
+    Returns:
+        str: Caminho completo do arquivo salvo.
+
+    Raises:
+        Exception: Se o download ou a correção de encoding falharem.
     """
     os.makedirs(save_dir, exist_ok=True)
     file_path = os.path.join(save_dir, file_name)
@@ -31,7 +41,6 @@ def download_csv(url, save_dir="tmp", file_name="data.csv", max_retries=5, retry
             retries += 1
             time.sleep(retry_interval)
 
-        # Corrige encoding e caracteres quebrados
         fix_csv_encoding(file_path)
 
         return file_path
@@ -41,16 +50,20 @@ def download_csv(url, save_dir="tmp", file_name="data.csv", max_retries=5, retry
 
 def process_csv(file_path, id_vars, var_name="ano", metric_names=None):
     """
-    Processa um CSV de forma genérica, separando múltiplas métricas por ano.
+    Processa um arquivo CSV, transformando-o em formato longo e separando métricas, se necessário.
 
     Args:
-        file_path (str): Caminho do arquivo CSV.
-        id_vars (list): Colunas que identificam o registro (e.g., 'id', 'pais').
-        var_name (str): Nome da coluna representando os anos.
-        metric_names (list): Lista de nomes para as métricas detectadas (e.g., ['quantidade_kg', 'valor_usd']).
+        file_path (str): Caminho completo do arquivo CSV.
+        id_vars (list): Colunas que identificam os registros (e.g., 'id', 'pais').
+        var_name (str): Nome da coluna para os anos (padrão: 'ano').
+        metric_names (list): Lista de métricas detectadas no arquivo.
 
     Returns:
-        pd.DataFrame: DataFrame em formato longo com as métricas separadas.
+        pd.DataFrame: DataFrame processado em formato longo.
+
+    Raises:
+        ValueError: Se `metric_names` não for uma lista.
+        Exception: Se houver erro ao processar o arquivo.
     """
     if not isinstance(metric_names, list):
         raise ValueError("`metric_names` deve ser uma lista contendo os nomes das métricas.")
@@ -60,27 +73,22 @@ def process_csv(file_path, id_vars, var_name="ano", metric_names=None):
     except Exception as e:
         raise Exception(f"Erro ao processar o arquivo: {e}")
 
-    # Normaliza nomes das colunas
     df.columns = [col.strip().lower().replace(" ", "_") for col in df.columns]
     df.columns = [col.replace("país", "pais") for col in df.columns]
 
-    # Detecta colunas de quantidade (sem '.1') e de valor (com '.1') apenas se necessário
     quantidade_cols = [col for col in df.columns if col.isdigit() and not col.endswith(".1")]
     valor_cols = [col for col in df.columns if col.endswith(".1")] if len(metric_names) > 1 else []
-    print("quantidade_cols:", quantidade_cols)
-    print("valor_cols:", valor_cols)
 
-    # Cria DataFrame longo para quantidade
     quantidade_df = df.melt(
         id_vars=id_vars,
         value_vars=quantidade_cols,
         var_name=var_name,
         value_name=metric_names[0]
     )
+
     quantidade_df[var_name] = quantidade_df[var_name].str.extract(r'(\d+)').astype(int)
     quantidade_df[metric_names[0]] = pd.to_numeric(quantidade_df[metric_names[0]], errors="coerce")
 
-    # Se houver mais de uma métrica, cria DataFrame longo para valores
     if len(metric_names) > 1:
         valor_df = df.melt(
             id_vars=id_vars,
@@ -91,27 +99,33 @@ def process_csv(file_path, id_vars, var_name="ano", metric_names=None):
         valor_df[var_name] = valor_df[var_name].str.extract(r'(\d+)').astype(int)
         valor_df[metric_names[1]] = pd.to_numeric(valor_df[metric_names[1]], errors="coerce")
 
-        # Combina quantidade e valor em um único DataFrame
         long_df = pd.merge(quantidade_df, valor_df, on=id_vars + [var_name], how="left")
     else:
         long_df = quantidade_df
 
-    # Remove duplicatas
     long_df = long_df.drop_duplicates(subset=id_vars + [var_name])
 
     return long_df
 
+
 def save_data_to_db(data, model, id_column, session: Session):
     """
-    Salva os dados processados no banco de dados.
+    Salva os dados processados no banco de dados, evitando duplicatas.
+
+    Args:
+        data (pd.DataFrame): Dados processados a serem salvos.
+        model (SQLAlchemy Model): Modelo da tabela no banco de dados.
+        id_column (str): Nome da coluna identificadora no modelo.
+        session (Session): Sessão ativa do banco de dados.
+
+    Raises:
+        Exception: Se houver erro ao salvar os dados.
     """
     try:
-        # Substitui NaN por None
         data = data.replace({np.nan: None})
 
         new_records = []
         for _, row in data.iterrows():
-            # Verifica se o registro já existe
             existing_record = session.query(model).filter_by(
                 id=row["id"], ano=row["ano"]
             ).first()
@@ -124,7 +138,6 @@ def save_data_to_db(data, model, id_column, session: Session):
                 )
                 new_records.append(new_record)
 
-        # Salva novos registros em lote
         if new_records:
             session.bulk_save_objects(new_records)
             session.commit()
@@ -140,7 +153,18 @@ def save_data_to_db(data, model, id_column, session: Session):
 
 def run_pipeline(url, model, id_vars, id_column, file_name="data.csv", metric_names=None):
     """
-    Pipeline completo para download, processamento e salvamento de dados no banco.
+    Executa o pipeline completo para download, processamento e armazenamento no banco de dados.
+
+    Args:
+        url (str): URL do arquivo CSV.
+        model (SQLAlchemy Model): Modelo da tabela no banco de dados.
+        id_vars (list): Colunas identificadoras no DataFrame.
+        id_column (str): Coluna identificadora no banco de dados.
+        file_name (str): Nome do arquivo salvo localmente (padrão: 'data.csv').
+        metric_names (list): Lista de métricas detectadas no arquivo.
+
+    Raises:
+        Exception: Se houver erro em qualquer etapa do pipeline.
     """
     save_dir = "tmp"
     session = SessionLocal()
@@ -152,11 +176,5 @@ def run_pipeline(url, model, id_vars, id_column, file_name="data.csv", metric_na
     except Exception as e:
         print(f"Erro no pipeline: {e}")
     finally:
-        if os.path.exists(save_dir):
-            try:
-                # shutil.rmtree(save_dir)
-                print(f"Pasta '{save_dir}' removida com sucesso!")
-            except Exception as e:
-                print(f"Erro ao remover a pasta '{save_dir}': {e}")
         session.close()
         print("Pipeline finalizado com sucesso!")

@@ -17,7 +17,6 @@ from app.models.processamento.processamento_vinifera import ProcessamentoVinifer
 from app.models.producao.producao import Producao
 from app.services.data_service import run_pipeline
 
-# URLs para os dados
 URL_PRODUCAO = "http://vitibrasil.cnpuv.embrapa.br/download/Producao.csv"
 URL_COMERCIO = "http://vitibrasil.cnpuv.embrapa.br/download/Comercio.csv"
 
@@ -196,7 +195,6 @@ def update_exp_frescas():
 
 
 
-# Inicia o agendador
 def start_scheduler():
     scheduler = BackgroundScheduler()
 

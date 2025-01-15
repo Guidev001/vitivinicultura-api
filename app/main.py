@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 
 from app.auth.auth_service import authenticate_user
 from app.database.db import Base, engine, get_db
-from app.routers import producao, comercio, processamento, importacao, users
+from app.routers import producao, comercio, processamento, importacao, users, exportacao
 from app.tasks.scheduler import start_scheduler
 
 Base.metadata.create_all(bind=engine)
@@ -23,7 +23,9 @@ app = FastAPI(
 
 @app.middleware("http")
 async def basic_auth_middleware(request: Request, call_next):
-    if request.url.path not in []:
+    open_paths = ["/users/", "/users"]
+
+    if not any(request.url.path.startswith(path) for path in open_paths):
         try:
             db = next(get_db())
             await authenticate_user(request, db)
@@ -36,10 +38,12 @@ async def basic_auth_middleware(request: Request, call_next):
     response = await call_next(request)
     return response
 
+
 app.include_router(producao.router)
 app.include_router(comercio.router)
 app.include_router(processamento.router)
 app.include_router(importacao.router)
+app.include_router(exportacao.router)
 app.include_router(users.router)
 
 start_scheduler()

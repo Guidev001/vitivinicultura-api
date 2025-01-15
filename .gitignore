@@ -28,7 +28,6 @@ tmp/
 
 # Arquivos de ambiente
 .env
-.env.*
 
 # Dependências do Python
 pip-log.txt

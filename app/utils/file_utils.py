@@ -4,11 +4,21 @@ import codecs
 def detect_encoding(file_path):
     """
     Detecta o encoding de um arquivo usando a biblioteca `chardet`.
+
+    Args:
+        file_path (str): Caminho completo do arquivo a ser analisado.
+
+    Returns:
+        str: O encoding detectado do arquivo.
+
+    Raises:
+        IOError: Se o arquivo não puder ser lido.
     """
     with open(file_path, "rb") as file:
         raw_data = file.read()
         result = chardet.detect(raw_data)
         return result['encoding']
+
 
 def fix_csv_encoding(file_path, output_path=None):
     """
@@ -16,15 +26,24 @@ def fix_csv_encoding(file_path, output_path=None):
     - Detecta automaticamente o encoding do arquivo de origem.
     - Converte o arquivo para o encoding desejado (padrão: UTF-8).
     - Substitui padrões comuns de caracteres quebrados.
+
+    Args:
+        file_path (str): Caminho completo do arquivo CSV original.
+        output_path (str, opcional): Caminho onde o arquivo corrigido será salvo.
+            Se não for fornecido, sobrescreve o arquivo original.
+
+    Returns:
+        None: Salva o arquivo corrigido no caminho especificado.
+
+    Raises:
+        Exception: Se ocorrer erro ao ler ou salvar o arquivo.
     """
     if not output_path:
         output_path = file_path
 
-    # Detecta o encoding original do arquivo
     source_encoding = detect_encoding(file_path)
     print(f"Encoding detectado: {source_encoding}")
 
-    # Substituições comuns de caracteres quebrados
     replacements = {
         "Ã§": "ç",
         "Ã£": "ã",
