@@ -101,7 +101,7 @@ pip install -r requirements.txt
 
 ### 5. Configure as Variáveis de Ambiente
 ```makefile
-cp .env.example .env
+cp .env.template .env
 ```
 
 ### 6. Execute a Aplicação
